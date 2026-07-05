@@ -13,6 +13,7 @@ import { useAuth } from "./auth/AuthContext";
 import { ArticleListItem } from "./components/ArticleListItem";
 import { ArticleMeta } from "./components/ArticleMeta";
 import { GlobalHeader } from "./components/GlobalHeader";
+import { NewsDraftStudio } from "./components/NewsDraftStudio";
 import { TutorialCard } from "./components/TutorialCard";
 import { Badge } from "./components/ui/Badge";
 import { MetricButton } from "./components/ui/MetricButton";
@@ -99,6 +100,14 @@ function App() {
                 articles={[...articles].sort(hotSort)}
                 onRequireAuth={requireAuth}
               />
+            }
+          />
+          <Route
+            path="/draft-news"
+            element={
+              <RequireAuth>
+                <NewsDraftStudio />
+              </RequireAuth>
             }
           />
           <Route

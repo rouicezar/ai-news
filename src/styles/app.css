@@ -556,6 +556,106 @@
   padding: var(--space-6);
 }
 
+.draft-page {
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.draft-workbench {
+  align-items: start;
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+}
+
+.source-form,
+.draft-output {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+
+.source-form label {
+  color: var(--color-text-muted);
+  display: grid;
+  font-size: var(--text-sm);
+  gap: var(--space-2);
+}
+
+.source-form input,
+.source-form textarea {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-3);
+}
+
+.source-form textarea {
+  min-height: 220px;
+  padding-block: var(--space-3);
+  resize: vertical;
+}
+
+.generated-draft {
+  border-bottom: 1px solid var(--color-border);
+  display: grid;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+}
+
+.generated-draft h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+.generated-draft p {
+  font-size: var(--text-base);
+  line-height: var(--leading-loose);
+  margin: 0;
+}
+
+.generated-draft .draft-summary {
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+}
+
+.draft-checks {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.draft-checks h3 {
+  font-size: var(--text-base);
+  margin: 0;
+}
+
+.draft-check {
+  align-items: start;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: auto 1fr;
+  padding: var(--space-3);
+}
+
+.draft-check svg {
+  color: var(--color-primary);
+  margin-top: 2px;
+}
+
+.draft-check p {
+  color: var(--color-text-muted);
+  margin: var(--space-1) 0 0;
+}
+
 .account-cluster {
   align-items: center;
   display: flex;
@@ -683,7 +783,8 @@
 
   .page-grid,
   .listing-layout,
-  .detail-layout {
+  .detail-layout,
+  .draft-workbench {
     grid-template-columns: 1fr;
   }
 
