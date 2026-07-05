@@ -6,6 +6,7 @@ export interface AiHotItem {
   sourceName: string;
   sourceTime: string;
   sourceUrl: string;
+  sourceImageUrl?: string;
 }
 
 export interface AiHotSection {
@@ -34,6 +35,11 @@ export interface AiHotPublishDraft {
   title: string;
   summary: string;
   body: string;
+  coverImage: {
+    url: string;
+    attribution: string;
+    isFallback: boolean;
+  };
   sourceNotice: string;
   checks: Array<{
     label: string;
@@ -74,11 +80,13 @@ export function generateAiHotPublishDraft(markdown: string): AiHotPublishDraft {
   const title = `${digest.dateLabel || "今日"} AI 观察：${leadTitle}${items.length > 1 ? `等 ${items.length} 条动态` : ""}`;
   const summary = buildSummary(digest, items, activeCategories);
   const body = buildBody(digest, items, activeCategories);
+  const coverImage = buildCoverImage(digest, items);
 
   return {
     title,
     summary,
     body,
+    coverImage,
     sourceNotice: `来源：${digest.dataSource}｜时间窗：${digest.timeWindow}｜原始简报条目：${items.length} 条`,
     checks: buildChecks(digest, items),
   };
@@ -116,14 +124,18 @@ function parseItems(sectionContent: string, category: string): AiHotItem[] {
   const items: AiHotItem[] = [];
 
   for (const match of sectionContent.matchAll(itemPattern)) {
+    const summary = normalizeParagraph(stripImageMarkdown(match[3]));
+    const sourceImageUrl = extractImageUrl(match[3]);
+
     items.push({
       index: Number(match[1]),
       category,
       title: match[2].trim(),
-      summary: normalizeParagraph(match[3]),
+      summary,
       sourceName: match[4].trim(),
       sourceTime: match[5].trim(),
       sourceUrl: match[6].trim(),
+      sourceImageUrl,
     });
   }
 
@@ -214,6 +226,30 @@ function buildBody(digest: AiHotDigest, items: AiHotItem[], activeCategories: st
   return [intro, itemBlocks, trendBlock, deepDiveBlock, sourceBlock].filter(Boolean).join("\n\n");
 }
 
+function buildCoverImage(digest: AiHotDigest, items: AiHotItem[]) {
+  const itemWithImage = items.find((item) => item.sourceImageUrl);
+
+  if (itemWithImage?.sourceImageUrl) {
+    return {
+      url: itemWithImage.sourceImageUrl,
+      attribution: `图片来源：${itemWithImage.sourceName}｜${itemWithImage.sourceUrl}`,
+      isFallback: false,
+    };
+  }
+
+  const lead = items[0];
+  const label = encodeURIComponent(digest.dateLabel || "AI HOT");
+  const title = encodeURIComponent(lead?.category ?? "Daily Brief");
+
+  return {
+    url: `https://placehold.co/1200x675/f7f8f8/171a1c?text=${label}%0A${title}`,
+    attribution: lead
+      ? `自动封面：未在邮件中解析到图片，使用来源标注封面｜首条来源：${lead.sourceName}｜${lead.sourceUrl}`
+      : "自动封面：未在邮件中解析到图片。",
+    isFallback: true,
+  };
+}
+
 function groupItemsByCategory(items: AiHotItem[]) {
   const grouped = new Map<string, AiHotItem[]>();
 
@@ -258,6 +294,19 @@ function buildChecks(digest: AiHotDigest, items: AiHotItem[]) {
 
 function normalizeParagraph(value: string) {
   return value.replace(/\n+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function extractImageUrl(value: string) {
+  return (
+    value.match(/!\[[^\]]*]\((https?:\/\/[^)\s]+)\)/)?.[1] ??
+    value.match(/图片[：:]\s*(https?:\/\/\S+)/)?.[1]
+  );
+}
+
+function stripImageMarkdown(value: string) {
+  return value
+    .replace(/!\[[^\]]*]\((https?:\/\/[^)\s]+)\)/g, "")
+    .replace(/图片[：:]\s*https?:\/\/\S+/g, "");
 }
 
 function escapeRegex(value: string) {

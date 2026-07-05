@@ -50,6 +50,8 @@ assert(
 );
 assert(draft.title.includes("2026年07月06日"), "draft title should include date");
 assert(draft.body.includes("来源说明"), "draft body should include source notice section");
+assert(draft.coverImage.url.length > 0, "draft should include a cover image");
+assert(draft.coverImage.attribution.includes("来源"), "cover image should include attribution");
 
 console.log("AI HOT digest parser verified");
 

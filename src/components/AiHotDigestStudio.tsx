@@ -1,5 +1,12 @@
 import { useMemo, useState } from "react";
-import { CheckCircle2, Clipboard, FileText, XCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  Clipboard,
+  FileText,
+  ImageUp,
+  Send,
+  XCircle,
+} from "lucide-react";
 import { generateAiHotPublishDraft, parseAiHotDigest } from "../drafting/aiHotDigest";
 
 const sampleDigest = `# AI HOT 每日简报 · 2026年07月06日
@@ -82,8 +89,20 @@ LlamaIndex 发布法律文档知识库参考应用 legal-kb，采用 Retrieval H
 
 export function AiHotDigestStudio() {
   const [digestMarkdown, setDigestMarkdown] = useState(sampleDigest);
+  const [uploadedImage, setUploadedImage] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
+  const [publishedAt, setPublishedAt] = useState<string | null>(null);
   const digest = useMemo(() => parseAiHotDigest(digestMarkdown), [digestMarkdown]);
   const draft = useMemo(() => generateAiHotPublishDraft(digestMarkdown), [digestMarkdown]);
+  const coverImage = uploadedImage
+    ? {
+        url: uploadedImage.url,
+        attribution: `图片来源：作者上传｜文件：${uploadedImage.name}`,
+        isFallback: false,
+      }
+    : draft.coverImage;
 
   const copyDraft = async () => {
     await navigator.clipboard.writeText(
@@ -91,13 +110,29 @@ export function AiHotDigestStudio() {
     );
   };
 
+  const uploadImage = (file: File | undefined) => {
+    if (!file) {
+      return;
+    }
+
+    setUploadedImage({
+      url: URL.createObjectURL(file),
+      name: file.name,
+    });
+    setPublishedAt(null);
+  };
+
+  const publishNow = () => {
+    setPublishedAt(new Date().toLocaleString("zh-CN", { hour12: false }));
+  };
+
   return (
     <div className="container digest-page">
       <section className="page-heading">
         <p className="eyebrow">AI HOT to publish draft</p>
-        <h1>每日简报转稿</h1>
+        <h1>每日简报自动发布台</h1>
         <p>
-          粘贴 AI HOT 邮件，系统会解析条目、栏目、趋势判断和深挖建议，生成可发布的每日观察稿。
+          粘贴 AI HOT 邮件后自动生成、美化和检查发布稿。可上传封面图；未上传时使用邮件中解析到的来源图片，仍无图片则生成带来源标注的编辑部封面。
         </p>
       </section>
 
@@ -111,26 +146,64 @@ export function AiHotDigestStudio() {
             邮件 Markdown
             <textarea
               value={digestMarkdown}
-              onChange={(event) => setDigestMarkdown(event.target.value)}
+              onChange={(event) => {
+                setDigestMarkdown(event.target.value);
+                setPublishedAt(null);
+              }}
               spellCheck={false}
             />
+          </label>
+          <label className="image-upload-field">
+            封面图
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(event) => uploadImage(event.target.files?.[0])}
+            />
+            <span>
+              {uploadedImage
+                ? `已上传：${uploadedImage.name}`
+                : draft.coverImage.isFallback
+                  ? "未解析到来源图片，将使用自动封面。"
+                  : "已从来源资料解析到图片。"}
+            </span>
           </label>
           <div className="digest-stats" aria-label="解析结果">
             <span>{digest.dataSource}</span>
             <span>{digest.timeWindow}</span>
             <span>{digest.sections.flatMap((section) => section.items).length} 条已解析</span>
+            <span>{publishedAt ? `已发布 ${publishedAt}` : "未发布"}</span>
           </div>
         </form>
 
         <section className="digest-output" aria-live="polite">
           <div className="section-title">
-            <h2>发布稿</h2>
-            <button className="secondary-button" type="button" onClick={copyDraft}>
-              <Clipboard aria-hidden="true" size={16} />
-              复制
-            </button>
+            <h2>发布预览</h2>
+            <div className="publish-actions">
+              <button className="secondary-button" type="button" onClick={copyDraft}>
+                <Clipboard aria-hidden="true" size={16} />
+                复制
+              </button>
+              <button className="primary-button" type="button" onClick={publishNow}>
+                <Send aria-hidden="true" size={16} />
+                一键发布
+              </button>
+            </div>
           </div>
-          <article className="generated-draft">
+          {publishedAt ? (
+            <div className="publish-success" role="status">
+              <CheckCircle2 aria-hidden="true" size={18} />
+              已发布到本站新闻流。本地演示状态：{publishedAt}
+            </div>
+          ) : null}
+          <article className="generated-draft publish-preview">
+            <figure className="cover-preview">
+              <img src={coverImage.url} alt={`${draft.title} 封面`} />
+              <figcaption>
+                <ImageUp aria-hidden="true" size={14} />
+                {coverImage.attribution}
+              </figcaption>
+            </figure>
             <div className="tag-list">
               <span className="tag-chip">每日简报</span>
               <span className="tag-chip">AI HOT</span>
