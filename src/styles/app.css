@@ -556,11 +556,13 @@
   padding: var(--space-6);
 }
 
-.draft-page {
+.draft-page,
+.digest-page {
   padding-block: var(--space-8) var(--space-16);
 }
 
-.draft-workbench {
+.draft-workbench,
+.digest-workbench {
   align-items: start;
   display: grid;
   gap: var(--space-6);
@@ -568,7 +570,9 @@
 }
 
 .source-form,
-.draft-output {
+.draft-output,
+.digest-input,
+.digest-output {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -577,7 +581,8 @@
   padding: var(--space-6);
 }
 
-.source-form label {
+.source-form label,
+.digest-input label {
   color: var(--color-text-muted);
   display: grid;
   font-size: var(--text-sm);
@@ -585,7 +590,8 @@
 }
 
 .source-form input,
-.source-form textarea {
+.source-form textarea,
+.digest-input textarea {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -600,6 +606,30 @@
   resize: vertical;
 }
 
+.digest-input textarea {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  min-height: 620px;
+  padding: var(--space-3);
+  resize: vertical;
+}
+
+.digest-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.digest-stats span {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  padding: var(--space-2) var(--space-3);
+}
+
 .generated-draft {
   border-bottom: 1px solid var(--color-border);
   display: grid;
@@ -612,6 +642,18 @@
   font-size: var(--text-3xl);
   line-height: var(--leading-tight);
   margin: 0;
+}
+
+.generated-draft h3 {
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-xl);
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-4);
+}
+
+.generated-draft h4 {
+  font-size: var(--text-lg);
+  margin: var(--space-2) 0 0;
 }
 
 .generated-draft p {
@@ -654,6 +696,33 @@
 .draft-check p {
   color: var(--color-text-muted);
   margin: var(--space-1) 0 0;
+}
+
+.digest-structure {
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.digest-structure h3 {
+  align-items: center;
+  display: flex;
+  font-size: var(--text-base);
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.digest-structure div {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.digest-structure span {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
 }
 
 .account-cluster {
@@ -784,7 +853,8 @@
   .page-grid,
   .listing-layout,
   .detail-layout,
-  .draft-workbench {
+  .draft-workbench,
+  .digest-workbench {
     grid-template-columns: 1fr;
   }
 

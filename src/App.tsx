@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import { Bookmark, ExternalLink, Heart, UserPlus } from "lucide-react";
 import { useAuth } from "./auth/AuthContext";
+import { AiHotDigestStudio } from "./components/AiHotDigestStudio";
 import { ArticleListItem } from "./components/ArticleListItem";
 import { ArticleMeta } from "./components/ArticleMeta";
 import { GlobalHeader } from "./components/GlobalHeader";
@@ -107,6 +108,14 @@ function App() {
             element={
               <RequireAuth>
                 <NewsDraftStudio />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/aihot-digest"
+            element={
+              <RequireAuth>
+                <AiHotDigestStudio />
               </RequireAuth>
             }
           />

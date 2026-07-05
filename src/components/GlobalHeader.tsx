@@ -11,6 +11,7 @@ const navItems = [
   { label: "首页", to: "/" },
   { label: "全球 AI 新闻", to: "/news" },
   { label: "AI 工具技巧", to: "/tips" },
+  { label: "简报转稿", to: "/aihot-digest" },
   { label: "写稿台", to: "/draft-news" },
   { label: "热榜", to: "/hot" },
   { label: "收藏", to: "/me/bookmarks" },
